@@ -9,6 +9,25 @@ class Tree {
   constructor(root) {
     this.root = root;
   }
+  insert(data) {
+    let node = this.root;
+    while (node !== null) {
+      if (data === node.data) return;
+      if (data < node.data) {
+        if (node.left === null) {
+          node.left = new Node(data);
+          return;
+        }
+        node = node.left;
+      } else if (data > node.data) {
+        if (node.right === null) {
+          node.right = new Node(data);
+          return;
+        }
+        node = node.right;
+      }
+    }
+  }
 }
 
 function sortedArrayToBSTRecur(arr, start, end) {
@@ -37,7 +56,7 @@ function sortAndToBST(arr) {
       finalArr.push(newArr[i]);
     }
   }
-  return sortedArrayToBSTRecur(finalArr, 0, finalArr.length - 1);
+  return new Tree(sortedArrayToBSTRecur(finalArr, 0, finalArr.length - 1));
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -56,4 +75,7 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 let testRoot = sortAndToBST(test);
-prettyPrint(testRoot);
+testRoot.insert(6);
+// insertToTree(2, testRoot);
+prettyPrint(testRoot.root);
+// console.log(testRoot.root);

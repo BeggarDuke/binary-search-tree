@@ -28,6 +28,60 @@ class Tree {
       }
     }
   }
+  delete(data) {
+    let result = this.search(data);
+    if (result === null) return;
+    if (result.nodeChildren === 0) {
+      (result.parent.left !== null && result.parent.left.data === data) 
+      ? result.parent.left = null 
+      : result.parent.right = null;
+      return;
+    }
+    if (result.nodeChildren === 1) {
+      let newNode = (result.node.left !== null) 
+      ? result.node.left 
+      : result.node.right;
+      (result.node === result.parent.left) 
+      ? result.parent.left = newNode
+      : result.parent.right = newNode;
+    } else {
+      
+    }
+  }
+  search(data) {
+    let node = this.root;
+    const childrenCheck = (node) => {
+      let nodeChildren = 0;
+      if (node.left !== null) nodeChildren++;
+      if (node.right !== null) nodeChildren++;
+      return nodeChildren;
+    }
+    if (data === node.data) {
+      return {
+        parent: null, 
+        node: node, 
+        nodeChildren: childrenCheck(node),
+      }
+    }
+    while (node !== null) {
+      if (node.left !== null && data === node.left.data) {
+        return {
+          parent: node, 
+          node: node.left, 
+          nodeChildren: childrenCheck(node.left),
+        }
+      }
+      if (node.right !== null && data === node.right.data) {
+        return {
+          parent: node, 
+          node: node.right, 
+          nodeChildren: childrenCheck(node.right),
+        }
+      }
+      (data < node.data) ? node = node.left : node = node.right;
+    }
+    return null;
+  }
 }
 
 function sortedArrayToBSTRecur(arr, start, end) {
@@ -75,7 +129,8 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 let testRoot = sortAndToBST(test);
-testRoot.insert(6);
-// insertToTree(2, testRoot);
+// testRoot.insert(6);
 prettyPrint(testRoot.root);
-// console.log(testRoot.root);
+// console.log(testRoot.search(324));
+testRoot.delete(9);
+prettyPrint(testRoot.root);

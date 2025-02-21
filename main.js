@@ -94,6 +94,36 @@ class Tree {
     }
     return null;
   }
+  levelOrder(callback) {
+    if (!callback || typeof callback !== "function") throw new Error("no valid callback is provided");
+    let q = [this.root];
+    let current = 0;
+    while (current < q.length) {
+      let node = q[current];
+      callback(node);
+      if (node.left !== null) q.push(node.left);
+      if (node.right !== null) q.push(node.right);
+      current++;
+    }
+  }
+  preOrder(callback, node = this.root) {
+    if (!callback || typeof callback !== "function") throw new Error("no valid callback is provided");
+    callback(node);
+    if (node.left) this.preOrder(callback, node.left);
+    if (node.right) this.preOrder(callback, node.right);
+  }
+  inOrder(callback, node = this.root) {
+    if (!callback || typeof callback !== "function") throw new Error("no valid callback is provided");
+    if (node.left) this.inOrder(callback, node.left);
+    callback(node);
+    if (node.right) this.inOrder(callback, node.right);
+  }
+  postOrder(callback, node = this.root) {
+    if (!callback || typeof callback !== "function") throw new Error("no valid callback is provided");
+    if (node.left) this.postOrder(callback, node.left);
+    if (node.right) this.postOrder(callback, node.right);
+    callback(node);
+  }
 }
 
 function sortedArrayToBSTRecur(arr, start, end) {
@@ -142,7 +172,13 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 6];
 let testRoot = sortAndToBST(test);
 // testRoot.insert(6);
-prettyPrint(testRoot.root);
+// prettyPrint(testRoot.root);
 // console.log(testRoot.search(324));
-testRoot.delete(23);
+// testRoot.delete(23);
 prettyPrint(testRoot.root);
+let arr = [];
+testRoot.inOrder((node) => {
+  arr.push(node.data);
+});
+// testRoot.levelOrder(1);
+console.log(arr);

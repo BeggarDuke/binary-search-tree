@@ -29,23 +29,35 @@ class Tree {
     }
   }
   delete(data) {
-    let result = this.search(data);
-    if (result === null) return;
-    if (result.nodeChildren === 0) {
-      (result.parent.left !== null && result.parent.left.data === data) 
-      ? result.parent.left = null 
-      : result.parent.right = null;
+    let current = this.search(data);
+    if (current === null) return;
+    if (current.nodeChildren === 0) {
+      (current.parent.left !== null && current.parent.left.data === data) 
+      ? current.parent.left = null 
+      : current.parent.right = null;
       return;
     }
-    if (result.nodeChildren === 1) {
-      let newNode = (result.node.left !== null) 
-      ? result.node.left 
-      : result.node.right;
-      (result.node === result.parent.left) 
-      ? result.parent.left = newNode
-      : result.parent.right = newNode;
+    if (current.nodeChildren === 1) {
+      let newNode = (current.node.left !== null) 
+      ? current.node.left 
+      : current.node.right;
+      (current.node === current.parent.left) 
+      ? current.parent.left = newNode
+      : current.parent.right = newNode;
     } else {
-      
+      let parent = null;
+      let newNode = current.node.right;
+      while (newNode.left !== null) {
+        parent = newNode;
+        newNode = newNode.left;
+      }
+      if (parent !== null) {
+        current.node.data = newNode.data;
+        parent.left = newNode.right;
+      } else {
+        current.node.data = newNode.data;
+        current.node.right = newNode.right;
+      }
     }
   }
   search(data) {
@@ -127,10 +139,10 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 };
 
 
-let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 6];
 let testRoot = sortAndToBST(test);
 // testRoot.insert(6);
 prettyPrint(testRoot.root);
 // console.log(testRoot.search(324));
-testRoot.delete(9);
+testRoot.delete(23);
 prettyPrint(testRoot.root);

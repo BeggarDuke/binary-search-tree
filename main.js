@@ -148,10 +148,41 @@ class Tree {
     return this.search(node).depth;
   }
   isBalanced() {
-
+    const findHeight = function(node) {
+      let obj = {
+        left: 0,
+        right: 0,
+      }
+      if (node.left) {
+        let tempObj = findHeight(node.left);
+        (tempObj.left >= tempObj.right) 
+        ? obj.left += tempObj.left + 1
+        : obj.left += tempObj.right + 1; 
+      }
+      if (node.right) {
+        let tempObj = findHeight(node.right);
+        (tempObj.left >= tempObj.right) 
+        ? obj.right += tempObj.left + 1
+        : obj.right += tempObj.right + 1; 
+      }
+      if (!node.left && !node.right) {
+        obj.left++;
+        obj.right++;
+        return obj;
+      }
+      return obj;
+    }
+    let result = findHeight(this.root);
+    if (result.left > (result.right + 1) 
+    || result.right > (result.left + 1)) {
+        return false;
+    } else return true;
   }
   rebalance() {
-    
+    let arr = []; 
+    this.inOrder((node) => arr.push(node.data));
+    this.root = sortedArrayToBSTRecur(arr, 0, arr.length - 1)
+    return arr;
   }
 }
 
@@ -204,15 +235,24 @@ testRoot.insert(6);
 testRoot.insert(1337);
 testRoot.insert(69);
 testRoot.insert(420);
+testRoot.insert(80813);
+testRoot.insert(80083);
 testRoot.insert(800813);
+testRoot.insert(80013);
+testRoot.insert(803);
+
 // prettyPrint(testRoot.root);
 // console.log(testRoot.search(324));
 // testRoot.delete(23);
 prettyPrint(testRoot.root);
-console.log(testRoot.height(8));
+// console.log(testRoot.height(8), testRoot.isBalanced(), testRoot.rebalance());
 // let arr = [];
 // testRoot.inOrder((node) => {
   // arr.push(node.data);
 // });
 // testRoot.levelOrder(1);
 // console.log(arr);
+console.log(testRoot.isBalanced());
+testRoot.rebalance();
+prettyPrint(testRoot.root);
+console.log(testRoot.isBalanced());

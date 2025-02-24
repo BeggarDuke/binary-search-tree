@@ -6,11 +6,43 @@ class Node {
   }
 }
 class Tree {
-  constructor(root) {
-    this.root = root;
+  constructor(arr) {
+    this.root = Tree.sortAndFillTree(arr, this);
+  }
+  static sortAndFillTree(arr, tree) {
+    if (!arr) return new Node(null);
+    const newArr = arr.sort((a, b) => a - b);
+    const finalArr = [];
+    for (let i = 0; i < newArr.length; i++) {
+      if (newArr[i] !== newArr[i+1]) {
+        finalArr.push(newArr[i]);
+      }
+    }
+    return tree.sortedArrayToBSTRecur(finalArr, 0, finalArr.length - 1);
+  }
+  sortedArrayToBSTRecur(arr, start, end) {
+    if (start > end) return null;
+  
+    // Find the middle element
+    let mid = start + Math.floor((end - start) / 2);
+  
+    // Create root node
+    let root = new Node(arr[mid]);
+    
+    // Create left subtree
+    root.left = this.sortedArrayToBSTRecur(arr, start, mid - 1);
+  
+    // Create right subtree
+    root.right = this.sortedArrayToBSTRecur(arr, mid + 1, end);
+  
+    return root;
   }
   insert(data) {
     let node = this.root;
+    if (!node.data) {
+      this.root.data = data;
+      return;
+    }
     while (node !== null) {
       if (data === node.data) return;
       if (data < node.data) {
@@ -181,38 +213,9 @@ class Tree {
   rebalance() {
     let arr = []; 
     this.inOrder((node) => arr.push(node.data));
-    this.root = sortedArrayToBSTRecur(arr, 0, arr.length - 1)
+    this.root = this.sortedArrayToBSTRecur(arr, 0, arr.length - 1)
     return arr;
   }
-}
-
-function sortedArrayToBSTRecur(arr, start, end) {
-  if (start > end) return null;
-
-  // Find the middle element
-  let mid = start + Math.floor((end - start) / 2);
-
-  // Create root node
-  let root = new Node(arr[mid]);
-  
-  // Create left subtree
-  root.left = sortedArrayToBSTRecur(arr, start, mid - 1);
-
-  // Create right subtree
-  root.right = sortedArrayToBSTRecur(arr, mid + 1, end);
-
-  return root;
-}
-
-function sortAndToBST(arr) {
-  const newArr = arr.sort((a, b) => a - b);
-  const finalArr = [];
-  for (let i = 0; i < newArr.length; i++) {
-    if (newArr[i] !== newArr[i+1]) {
-      finalArr.push(newArr[i]);
-    }
-  }
-  return new Tree(sortedArrayToBSTRecur(finalArr, 0, finalArr.length - 1));
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -227,32 +230,3 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 };
-
-
-let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-let testRoot = sortAndToBST(test);
-testRoot.insert(6);
-testRoot.insert(1337);
-testRoot.insert(69);
-testRoot.insert(420);
-testRoot.insert(80813);
-testRoot.insert(80083);
-testRoot.insert(800813);
-testRoot.insert(80013);
-testRoot.insert(803);
-
-// prettyPrint(testRoot.root);
-// console.log(testRoot.search(324));
-// testRoot.delete(23);
-prettyPrint(testRoot.root);
-// console.log(testRoot.height(8), testRoot.isBalanced(), testRoot.rebalance());
-// let arr = [];
-// testRoot.inOrder((node) => {
-  // arr.push(node.data);
-// });
-// testRoot.levelOrder(1);
-// console.log(arr);
-console.log(testRoot.isBalanced());
-testRoot.rebalance();
-prettyPrint(testRoot.root);
-console.log(testRoot.isBalanced());

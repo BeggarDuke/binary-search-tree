@@ -62,6 +62,7 @@ class Tree {
   }
   search(data) {
     let node = this.root;
+    let depth = 1;
     const childrenCheck = (node) => {
       let nodeChildren = 0;
       if (node.left !== null) nodeChildren++;
@@ -73,14 +74,17 @@ class Tree {
         parent: null, 
         node: node, 
         nodeChildren: childrenCheck(node),
+        depth: depth,
       }
     }
     while (node !== null) {
+      depth++;
       if (node.left !== null && data === node.left.data) {
         return {
           parent: node, 
           node: node.left, 
           nodeChildren: childrenCheck(node.left),
+          depth: depth,
         }
       }
       if (node.right !== null && data === node.right.data) {
@@ -88,6 +92,7 @@ class Tree {
           parent: node, 
           node: node.right, 
           nodeChildren: childrenCheck(node.right),
+          depth: depth,
         }
       }
       (data < node.data) ? node = node.left : node = node.right;
@@ -123,6 +128,30 @@ class Tree {
     if (node.left) this.postOrder(callback, node.left);
     if (node.right) this.postOrder(callback, node.right);
     callback(node);
+  }
+  height(node) {
+    let data = this.search(node).node;
+    const findHeight = function(node) {
+      let left = 0;
+      let right = 0;
+      if (node.left)left += findHeight(node.left) + 1;
+      if (node.right)right += findHeight(node.right) + 1;
+      if (!node.left && !node.right) {
+        return 1;
+      }
+      if (left >= right) return left;
+      return right;
+    }
+    return findHeight(data);
+  }
+  depth(node) {
+    return this.search(node).depth;
+  }
+  isBalanced() {
+
+  }
+  rebalance() {
+    
   }
 }
 
@@ -169,16 +198,21 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 };
 
 
-let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 6];
+let test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 let testRoot = sortAndToBST(test);
-// testRoot.insert(6);
+testRoot.insert(6);
+testRoot.insert(1337);
+testRoot.insert(69);
+testRoot.insert(420);
+testRoot.insert(800813);
 // prettyPrint(testRoot.root);
 // console.log(testRoot.search(324));
 // testRoot.delete(23);
 prettyPrint(testRoot.root);
-let arr = [];
-testRoot.inOrder((node) => {
-  arr.push(node.data);
-});
+console.log(testRoot.height(8));
+// let arr = [];
+// testRoot.inOrder((node) => {
+  // arr.push(node.data);
+// });
 // testRoot.levelOrder(1);
-console.log(arr);
+// console.log(arr);
